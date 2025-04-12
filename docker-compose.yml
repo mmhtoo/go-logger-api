@@ -1,0 +1,19 @@
+services:
+  postgres:
+    container_name: postgres_logger
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: logger
+    volumes:
+      - logger_postgres_data:/var/lib/postgresql/data
+      - type: bind
+        source: ./config/database
+        target: /docker-entrypoint-initdb.d/
+
+volumes:
+  logger_postgres_data:
