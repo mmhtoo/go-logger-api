@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"sync"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -25,7 +24,6 @@ type DatabaseCredentials struct {
 
 type Database struct {
 	Connection *sql.DB
-	connectionMutex *sync.Mutex
 	parameters DatabaseParameters
 }
 
@@ -52,7 +50,6 @@ func NewDatabase(
 	}
 	database := &Database{
 		parameters: parameters,
-		connectionMutex: &sync.Mutex{},
 		Connection: conn,
 	}
 	return database, nil

@@ -13,10 +13,11 @@ func CheckValidationMiddleware(schema interface{}) gin.HandlerFunc {
 		if err := c.ShouldBindJSON(obj); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
+				"message": "Validation failed!",
 			})
 			return
 		}
-		c.Set("body", obj)
+		c.Set("payload", obj)
 		c.Next()
 	}
 }

@@ -7,9 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mmhtoo/go-logger-api/config"
-	"github.com/mmhtoo/go-logger-api/handlers"
-	"github.com/mmhtoo/go-logger-api/repositories"
-	"github.com/mmhtoo/go-logger-api/services"
+	"github.com/mmhtoo/go-logger-api/features/project"
+	"github.com/mmhtoo/go-logger-api/middlewares"
 )
 
 func main() {
@@ -38,15 +37,11 @@ func main() {
 	v1Router := router.Group("/api/v1")
 
 	// handlers
-	projectHandler := handlers.ProjectHandler{
-		Service: &services.ProjectService{
-			ProjectRepository: &repositories.ProjectRepository{
-				Database: database,
-			},
-		},
-	}
-	v1Router.POST("/projects", projectHandler.CreateNewProjectHandler)
-	v1Router.GET("/projects", projectHandler.GetAllProjectHandler)
+	projectRepo := project.NewProjectRepository(database)
+	projectService := project.NewProjectService(projectRepo)
+	projectHandler := project.NewProjectHandler(projectService)
+	v1Router.GET("/projects", projectHandler.HandleGetAllProjects)
+	v1Router.POST("/projects", middlewares.CheckValidationMiddleware(project.ProjectCreateReqDto{}), projectHandler.HandleCreateProject)
 
 	v1Router.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
