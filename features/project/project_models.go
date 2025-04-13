@@ -18,8 +18,22 @@ type ProjectCreateReqDto struct {
 	CreatedUserId string `json:"createdUserId" binding:"required,min=3,max=255"`	
 }
 
+// type project update req dto
+type ProjectUpdateReqDto struct {
+	Name string `json:"name" binding:"required,min=3,max=50"`
+	Description string `json:"description" binding:"required,min=3,max=355"`	
+	ProjectType string `json:"projectType" binding:"required,min=3,max=100"`	
+}
+
+
 // project create input
 type ProjectCreateInput struct {
 	*ProjectCreateReqDto
+	Id string
+}
+
+// project update input
+type ProjectUpdateInput struct {
+	*ProjectUpdateReqDto
 	Id string
 }

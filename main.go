@@ -43,6 +43,8 @@ func main() {
 	projectHandler := project.NewProjectHandler(projectService)
 	v1Router.GET("/projects", projectHandler.HandleGetAllProjects)
 	v1Router.POST("/projects", middlewares.CheckValidationMiddleware(project.ProjectCreateReqDto{}), projectHandler.HandleCreateProject)
+	v1Router.PUT("/projects/:id", middlewares.CheckValidationMiddleware(project.ProjectUpdateReqDto{}), projectHandler.HandleUpdateProject)
+	v1Router.GET("/projects/:id", projectHandler.HandleFindById)
 
 	v1Router.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, helpers.NewAPIBaseResponse("Pong!"))

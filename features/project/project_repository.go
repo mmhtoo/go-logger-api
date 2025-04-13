@@ -2,6 +2,7 @@ package project
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"github.com/mmhtoo/go-logger-api/config"
@@ -20,6 +21,7 @@ func NewProjectRepository(database *config.Database) *ProjectRepository {
 func (repo *ProjectRepository) GetAll(ctx context.Context) ([]ProjectEntity, error){
 	query := `
 		SELECT * FROM projects
+		ORDER BY created_at DESC
 	`
 	rows, err := repo.database.Connection.QueryContext(
 		ctx, 
@@ -79,5 +81,57 @@ func (repo *ProjectRepository) Save(input *ProjectCreateInput, ctx context.Conte
 		return project, err
 	}
 	
+	return project, nil
+}
+
+func (repo *ProjectRepository) UpdateById(input *ProjectUpdateInput, ctx context.Context) (error) {
+	query := `
+		UPDATE projects
+		SET name = $1, description = $2, project_type = $3
+		WHERE id = $4
+	`
+	result, err := repo.database.Connection.ExecContext(
+		ctx, 
+		query, 
+		input.Name,
+		input.Description,
+		input.ProjectType,
+		input.Id,
+	)
+	if err != nil {
+		return errors.New("Failed to update project with error:"+err.Error())
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil && rowsAffected == 0 {
+		return errors.New("Project was not found to update!")
+	}
+	return nil
+}
+
+func (repo *ProjectRepository) findById(id string, ctx context.Context) (ProjectEntity, error) {
+	query := `
+		SELECT * FROM projects
+		WHERE id = $1
+	`
+	row := repo.database.Connection.QueryRowContext(
+		ctx, 
+		query, 
+		id,
+	)
+	var project ProjectEntity
+	if row != nil {
+		return project, errors.New("Project was not found!")
+	}
+	if err := row.Scan(
+		&project.Id,
+		&project.Name,
+		&project.Description,
+		&project.ProjectType,
+		&project.CreatedUserId,
+		&project.CreatedAt,
+	); err != nil {
+		log.Fatalf("Error while retrieving project: %s", err)
+		return  project, errors.New("Failed to retrieve!")
+	}
 	return project, nil
 }

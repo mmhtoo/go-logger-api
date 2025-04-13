@@ -31,3 +31,16 @@ func (service *ProjectService) CreateProject(ctx context.Context, input *Project
 	}
 	return savedProject, nil
 }
+
+func (service *ProjectService) UpdateProject(ctx context.Context, input *ProjectUpdateInput) (error){
+	err := service.projectRepository.UpdateById(input, ctx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (service *ProjectService) FindById(ctx context.Context, id string) (ProjectEntity, error){
+	project, err := service.projectRepository.findById(id, ctx)
+	return project, err
+}
