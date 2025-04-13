@@ -34,6 +34,9 @@ func main() {
 		panic("Failed to connect database " + err.Error())
 	}
 
+	if env.GIN_MODE == "release" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	router := gin.Default()
 	v1Router := router.Group("/api/v1")
 
@@ -50,5 +53,5 @@ func main() {
 		c.JSON(http.StatusOK, helpers.NewAPIBaseResponse("Pong!"))
 	})
 
-	router.Run(":8080")
+	router.Run(env.PORT)
 }

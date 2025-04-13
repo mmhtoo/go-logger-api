@@ -13,6 +13,7 @@ type Environment struct {
 	DB_NAME string `env:"DB_NAME" default:"logger"`
 	DB_USERNAME string `env:"DB_USERNAME" default:"root"`
 	DB_PASSWORD string `env:"DB_PASSWORD" default:"root"`
+	GIN_MODE string `env:"GIN_MODE" default:"debug"`
 }
 
 func LoadEnv() Environment {
@@ -24,5 +25,6 @@ func LoadEnv() Environment {
 		DB_NAME: os.Getenv("DB_NAME"),
 		DB_USERNAME: os.Getenv("DB_USERNAME"),	
 		DB_PASSWORD: os.Getenv("DB_PASSWORD"),	
+		GIN_MODE: os.Getenv("GIN_MODE"),
 	}
 }

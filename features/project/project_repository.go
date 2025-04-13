@@ -119,9 +119,6 @@ func (repo *ProjectRepository) findById(id string, ctx context.Context) (Project
 		id,
 	)
 	var project ProjectEntity
-	if row != nil {
-		return project, errors.New("Project was not found!")
-	}
 	if err := row.Scan(
 		&project.Id,
 		&project.Name,
@@ -130,8 +127,7 @@ func (repo *ProjectRepository) findById(id string, ctx context.Context) (Project
 		&project.CreatedUserId,
 		&project.CreatedAt,
 	); err != nil {
-		log.Fatalf("Error while retrieving project: %s", err)
-		return  project, errors.New("Failed to retrieve!")
+		return  project, err
 	}
 	return project, nil
 }

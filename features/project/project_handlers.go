@@ -1,6 +1,7 @@
 package project
 
 import (
+	"database/sql"
 	"errors"
 	"net/http"
 
@@ -108,7 +109,7 @@ func (h *ProjectHandler) HandleFindById(c *gin.Context){
 		id,
 	)
 	if err != nil {
-		if project.Id == "" {
+		if errors.Is(err, sql.ErrNoRows) == true {
 			c.JSON(
 				http.StatusNotFound,
 				helpers.NewAPIBaseResponse("Not project found with id: "+id),

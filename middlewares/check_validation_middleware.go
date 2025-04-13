@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CheckValidationMiddleware(schema interface{}) gin.HandlerFunc {
+func CheckValidationMiddleware(schema any) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		obj := reflect.New(reflect.TypeOf(schema)).Interface()
 		if err := c.ShouldBindJSON(obj); err != nil {
