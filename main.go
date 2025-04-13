@@ -37,7 +37,9 @@ func main() {
 	if env.GIN_MODE == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
 	router := gin.Default()
+	router.Use(middlewares.GlobalErrorHandler())
 	v1Router := router.Group("/api/v1")
 
 	// handlers
