@@ -3,7 +3,6 @@ package project
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"log"
 
 	"github.com/mmhtoo/go-logger-api/config"
@@ -66,7 +65,6 @@ func (service *ProjectService) CreateProject(
 	if err != nil {
 		return ProjectEntity{}, err
 	}
-	fmt.Printf("result ", result)
 	return result.(ProjectEntity), nil
 }
 

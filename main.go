@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mmhtoo/go-logger-api/config"
+	"github.com/mmhtoo/go-logger-api/features/jwt_secret"
 	"github.com/mmhtoo/go-logger-api/features/project"
 	"github.com/mmhtoo/go-logger-api/helpers"
 	"github.com/mmhtoo/go-logger-api/middlewares"
@@ -48,6 +49,10 @@ func main() {
 	v1Router.POST("/projects", middlewares.CheckValidationMiddleware(project.ProjectCreateReqDto{}), projectHandler.HandleCreateProject)
 	v1Router.PUT("/projects/:id", middlewares.CheckValidationMiddleware(project.ProjectUpdateReqDto{}), projectHandler.HandleUpdateProject)
 	v1Router.GET("/projects/:id", projectHandler.HandleFindById)
+
+	jwtSecretHandler := jwt_secret.NewJwtSecretHandler(database)
+	v1Router.GET("/projects/:id/jwt-secrets", jwtSecretHandler.HandleGetAllJwtSecretsByProjectId)
+	v1Router.GET("/projects/:id/jwt-secrets/:secretId", jwtSecretHandler.HandleGetDetailById)
 
 	v1Router.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, helpers.NewAPIBaseResponse("Pong!"))
