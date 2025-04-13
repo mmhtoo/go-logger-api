@@ -24,3 +24,17 @@ create table if not exists jwt_secrets (
 	constraint projects_to_jwt_secrets foreign key (project_id) 
 	references projects (id) on delete set null
 )
+
+-- Table: log_groups
+create table if not exists log_groups (
+	id varchar(255) primary key,
+	log_type varchar(100) not null,
+	logged_at timestamp default current_timestamp,
+	path_name varchar(255) not null,
+	project_id varchar(255) not null,
+	payload jsonb not null,
+	constraint projects_log_groups foreign key (project_id)
+	references projects(id) on delete cascade
+) 
+
+CREATE INDEX idx_log_groups ON log_groups (path_name, log_type)
