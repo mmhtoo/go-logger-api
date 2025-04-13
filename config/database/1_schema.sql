@@ -30,11 +30,13 @@ create table if not exists log_groups (
 	id varchar(255) primary key,
 	log_type varchar(100) not null,
 	logged_at timestamp default current_timestamp,
+	logged_by varchar(255) not null,
 	path_name varchar(255) not null,
 	project_id varchar(255) not null,
 	payload jsonb not null,
 	constraint projects_log_groups foreign key (project_id)
-	references projects(id) on delete cascade
+	references projects(id) on delete cascade,
+	constraint jwt_secrets_log_groups foreign key (logged_by)
+	references jwt_secrets(id) on delete cascade
 ) 
-
 CREATE INDEX idx_log_groups ON log_groups (path_name, log_type)
