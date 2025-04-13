@@ -41,9 +41,7 @@ func main() {
 	v1Router := router.Group("/api/v1")
 
 	// handlers
-	projectRepo := project.NewProjectRepository(database)
-	projectService := project.NewProjectService(projectRepo)
-	projectHandler := project.NewProjectHandler(projectService)
+	projectHandler := project.NewProjectHandler(database)
 	v1Router.GET("/projects", projectHandler.HandleGetAllProjects)
 	v1Router.POST("/projects", middlewares.CheckValidationMiddleware(project.ProjectCreateReqDto{}), projectHandler.HandleCreateProject)
 	v1Router.PUT("/projects/:id", middlewares.CheckValidationMiddleware(project.ProjectUpdateReqDto{}), projectHandler.HandleUpdateProject)

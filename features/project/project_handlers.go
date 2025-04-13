@@ -7,6 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/mmhtoo/go-logger-api/config"
+	"github.com/mmhtoo/go-logger-api/features/jwt_secret"
 	"github.com/mmhtoo/go-logger-api/helpers"
 )
 
@@ -14,9 +16,12 @@ type ProjectHandler struct {
 	projectService *ProjectService
 }
 
-func NewProjectHandler(projectService *ProjectService) *ProjectHandler {
+func NewProjectHandler(database *config.Database) *ProjectHandler {
 	return &ProjectHandler{
-		projectService: projectService,
+		projectService: NewProjectService(
+			NewProjectRepository(database),
+			jwt_secret.NewJwtSecretService(jwt_secret.NewJwtSecretRepository(database)),
+		),
 	}
 }
 
@@ -48,6 +53,7 @@ func (h *ProjectHandler) HandleCreateProject(c *gin.Context) {
 			http.StatusInternalServerError,
 			helpers.NewAPIErrorResponse(err.Error(),"Failed to create project!"),
 	  )
+		return
 	}
 	c.JSON(
 		http.StatusCreated,
