@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/mmhtoo/go-logger-api/helpers"
 )
 
 type ProjectHandler struct {
@@ -25,10 +26,10 @@ func (h *ProjectHandler) HandleGetAllProjects(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"data": projects,
-		"message" : "Succcess!",
-	})
+	c.JSON(
+		http.StatusOK, 
+		helpers.NewAPIDataResponse(projects, "Successfully retrieved!"),
+	)
 }
 
 func (h *ProjectHandler) HandleCreateProject(c *gin.Context) {
@@ -41,13 +42,13 @@ func (h *ProjectHandler) HandleCreateProject(c *gin.Context) {
 		},
 	)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message" : "Failed to create project!",
-			"error": err.Error(),
-		})
+		c.JSON(
+			http.StatusInternalServerError,
+			helpers.NewAPIErrorResponse(err.Error(),"Failed to create project!"),
+	  )
 	}
-	c.JSON(http.StatusCreated, gin.H{
-		"data": savedProject,
-		"message": "Success!",
-	})
+	c.JSON(
+		http.StatusCreated,
+		helpers.NewAPIDataResponse(savedProject,"Successfully created!"),
+	)
 }

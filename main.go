@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mmhtoo/go-logger-api/config"
 	"github.com/mmhtoo/go-logger-api/features/project"
+	"github.com/mmhtoo/go-logger-api/helpers"
 	"github.com/mmhtoo/go-logger-api/middlewares"
 )
 
@@ -44,9 +45,7 @@ func main() {
 	v1Router.POST("/projects", middlewares.CheckValidationMiddleware(project.ProjectCreateReqDto{}), projectHandler.HandleCreateProject)
 
 	v1Router.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Pong! "+env.DB_NAME,
-		})
+		c.JSON(http.StatusOK, helpers.NewAPIBaseResponse("Pong!"))
 	})
 
 	router.Run(":8080")
