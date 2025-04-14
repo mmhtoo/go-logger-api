@@ -22,3 +22,18 @@ func CheckValidationMiddleware(schema any) gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func CheckQueryValidationMiddleware(schema any) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		obj := reflect.New(reflect.TypeOf(schema)).Interface()
+		if err := ctx.ShouldBindQuery(obj); err != nil {
+			ctx.AbortWithStatusJSON(
+				http.StatusBadRequest, 
+				helpers.NewAPIErrorResponse(err.Error(), "Validation failed!"),
+			)
+			return
+		}
+		ctx.Set("query", obj)
+		ctx.Next()
+	}
+}

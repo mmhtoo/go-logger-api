@@ -57,6 +57,7 @@ func main() {
 
 	logHandler := log.NewLogHandler(database)
 	v1Router.POST("/logs", middlewares.CheckValidationMiddleware(log.SaveLogReqDto{}), logHandler.HandleSaveLog)
+	v1Router.GET("/logs", middlewares.CheckQueryValidationMiddleware(log.GetLogsWithFilterReqDto{}) , logHandler.HandleGetLogsWithFilter)
 
 	v1Router.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, helpers.NewAPIBaseResponse("Pong!"))

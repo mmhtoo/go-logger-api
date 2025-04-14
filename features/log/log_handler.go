@@ -1,6 +1,7 @@
 package log
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -36,4 +37,40 @@ func (h *LogHandler) HandleSaveLog(c *gin.Context){
 		return
 	}
 	c.JSON(http.StatusCreated, helpers.NewAPIBaseResponse("Success!"))	
+}
+
+func (h* LogHandler) HandleGetLogsWithFilter(c *gin.Context){
+	ctx := c.Request.Context()
+	queryPayload, exists := c.Get("query")
+	if !exists {
+		c.JSON(
+			http.StatusBadRequest,
+			helpers.NewAPIErrorResponse(
+				errors.New("Invalid query payload!"),
+				"Validation failed!",
+			),
+		)
+		return
+	}
+	logs, err := h.logService.GetLogsWithFilter(
+		(queryPayload.(*GetLogsWithFilterReqDto)).ToSelectByProjectIdWithFilterInput(),
+		ctx,
+	)
+	if err != nil {
+		c.JSON(
+			http.StatusInternalServerError,
+			helpers.NewAPIErrorResponse(
+				err.Error(),
+				"Failed to process!",
+			),
+		)
+		return
+	}
+	c.JSON(
+		http.StatusOK,
+		helpers.NewAPIDataResponse(
+			MapLogEntitiesToResDto(logs),
+			"Successfully retrieved!",
+		),
+	)
 }
